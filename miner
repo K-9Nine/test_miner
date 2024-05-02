@@ -1,0 +1,66 @@
+#include <cuda_runtime.h>
+#include <iostream>
+#include <chrono>
+#include <cstring>
+#include <string>
+
+// ... Xelis hash algorithm implementation ...
+
+int main(int argc, char* argv[]) {
+    std::string ip_port;
+    std::string mining_address;
+
+    // Parse command-line arguments
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg.substr(0, 8) == "--ip:port") {
+            ip_port = arg.substr(8);
+        } else if (arg.substr(0, 9) == "--address") {
+            mining_address = arg.substr(9);
+        }
+    }
+
+    if (ip_port.empty() || mining_address.empty()) {
+        std::cerr << "Usage: " << argv[0] << " --ip:port <ip:port> --address <mining_address>" << std::endl;
+        return 1;
+    }
+
+    // ... Set up CUDA device and memory ...
+
+    // Connect to the Xelis node
+    // Use the ip_port value to establish a connection to the Xelis node
+
+    // Start mining
+    while (true) {
+        // Retrieve the block template from the Xelis node
+
+        // Prepare the mining data
+        // Include the mining_address in the coinbase transaction
+
+        // Launch the mining kernel
+        xelis_hash_kernel<<<num_blocks, num_threads>>>(d_input, d_scratch_pad, d_hash_output, nonce_offset, nonce_stride);
+
+        // Check for hash results on the host
+        uint8_t* hash_output = new uint8_t[num_threads * num_blocks * HASH_SIZE];
+        cudaMemcpy(hash_output, d_hash_output, num_threads * num_blocks * HASH_SIZE, cudaMemcpyDeviceToHost);
+
+        for (size_t i = 0; i < num_threads * num_blocks; ++i) {
+            uint8_t* hash = hash_output + i * HASH_SIZE;
+            // Check if hash meets the target difficulty
+            // ...
+            // If a valid hash is found, construct the mined block
+            // Include the coinbase transaction with the mining_address
+            // ...
+        }
+
+        delete[] hash_output;
+
+        // Submit the mined block to the Xelis node
+
+        nonce_offset += nonce_stride;
+    }
+
+    // ... Clean up CUDA resources ...
+
+    return 0;
+}
